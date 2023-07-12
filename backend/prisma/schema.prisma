@@ -9,3 +9,148 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Game {
+  id                 Int               @id
+  slug               String
+  name               String
+  released           String
+  tba                Boolean
+  background_image   String
+  rating             Float
+  rating_top         Float
+  ratings_count      Int
+  reviews_text_count Int
+  added              Int
+  added_by_status    AddedByStatus?
+  metacritic         Int
+  playtime           Int
+  suggestions_count  Int
+  updated            String
+  user_game          String?
+  reviews_count      Int
+  saturated_color    String
+  dominant_color     String
+  clip               String
+  platforms          PlatformOnGames[]
+  parent_platforms   ParentPlatform[]
+  genres             Genre[]
+  stores             Store[]
+  tags               Tag[]
+  esrb_rating        EsrbRating[]
+  short_screenshots  ShortScreenshot[]
+  Rating             Rating[]
+
+  @@unique([slug, name])
+}
+
+model Rating {
+  id      Int    @id
+  title   String
+  count   Int
+  percent Float
+  games   Game[]
+
+  @@unique([title])
+}
+
+model AddedByStatus {
+  id      Int  @id @default(autoincrement())
+  yet     Int
+  owned   Int
+  beaten  Int
+  toplay  Int
+  dropped Int
+  playing Int
+  game    Game @relation(fields: [gameId], references: [id])
+  gameId  Int
+
+  @@unique([gameId])
+}
+
+model PlatformOnGames {
+  game                     Game     @relation(fields: [gameId], references: [id])
+  platform                 Platform @relation(fields: [platformId], references: [id])
+  minimum_requirements     String?
+  recommended_requirements String?
+  gameId                   Int
+  platformId               Int
+
+  @@id([gameId, platformId])
+}
+
+model Platform {
+  id               Int               @id
+  name             String
+  slug             String
+  image            String?
+  year_end         Int?
+  year_start       Int?
+  games_count      Int
+  image_background String
+  games            PlatformOnGames[]
+
+  @@unique([slug])
+}
+
+model ParentPlatform {
+  id    Int    @id
+  name  String
+  slug  String
+  games Game[]
+
+  @@unique([slug])
+}
+
+model Genre {
+  id               Int    @id
+  name             String
+  slug             String
+  games_count      Int
+  image_background String
+  games            Game[]
+
+  @@unique([slug])
+}
+
+model Store {
+  id               Int    @id
+  name             String
+  slug             String
+  domain           String
+  games_count      Int
+  image_background String
+  game             Game[]
+
+  @@unique([slug])
+}
+
+model Tag {
+  id               Int    @id
+  name             String
+  slug             String
+  language         String
+  games_count      Int
+  image_background String
+  games            Game[]
+
+  @@unique([slug])
+}
+
+model EsrbRating {
+  id    Int    @id
+  name  String
+  slug  String
+  games Game[]
+
+  @@unique([slug])
+}
+
+model ShortScreenshot {
+  id     Int    @id
+  image  String
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId Int
+
+  @@unique([image])
+}
