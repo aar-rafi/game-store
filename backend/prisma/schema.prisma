@@ -23,7 +23,7 @@ model Game {
   reviews_text_count Int
   added              Int
   added_by_status    AddedByStatus?
-  metacritic         Int
+  metacritic         Int?
   playtime           Int
   suggestions_count  Int
   updated            String

@@ -25,6 +25,15 @@ export const getGenre = async (_req: Request, res: Response) => {
   }
 };
 
+export const getParentPlatform = async (res: Response) => {
+  try {
+    const response = await prisma.parentPlatform.findMany();
+    res.status(200).json(response);
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message || "can't get parentplatform" });
+  }
+};
+
 //export const getGames =
 // async function getGame() {
 //   const response = await prisma.game.findMany();

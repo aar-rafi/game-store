@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import data from "../games.json";
+import data from "../games3.json";
 
 const prisma = new PrismaClient();
 
@@ -33,9 +33,10 @@ async function seed() {
             connectOrCreate: {
               where: { id: gameData.esrb_rating.id },
               create: {
-                id: gameData.esrb_rating.id,
-                name: gameData.esrb_rating.name,
-                slug: gameData.esrb_rating.slug,
+                // id: gameData.esrb_rating.id,
+                // name: gameData.esrb_rating.name,
+                // slug: gameData.esrb_rating.slug,
+                ...gameData.esrb_rating,
               },
             },
           },
@@ -54,6 +55,24 @@ async function seed() {
             : {},
         },
       });
+
+      // if (gameData.esrb_rating) {
+      //   await prisma.esrbRating.upsert({
+      //     where: { id: gameData.esrb_rating.id },
+      //     update: {
+      //       games: {
+      //         connect: {
+      //           id: gameData.id,
+      //         },
+      //       },
+      //     },
+      //     create: {
+      //       id: gameData.esrb_rating.id,
+      //       name: gameData.esrb_rating.name,
+      //       slug: gameData.esrb_rating.slug,
+      //     },
+      //   });
+      // }
 
       // Seed the ratings
       for (const ratingData of gameData.ratings) {
@@ -205,7 +224,6 @@ async function seed() {
               },
             },
           },
-
           create: {
             id: storeData.id,
             name: storeData.name,
