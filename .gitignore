@@ -22,4 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/services/api-client.ts
+/mnt/New Volume F/full-stack-crud/game-site/bindu-hackathon-1/src/services/api-client.ts
