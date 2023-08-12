@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ["query"] });
 
 export const getGames = async (_req: Request, res: Response) => {
   try {
@@ -25,7 +25,7 @@ export const getGenre = async (_req: Request, res: Response) => {
   }
 };
 
-export const getParentPlatform = async (res: Response) => {
+export const getParentPlatform = async (_req: Request, res: Response) => {
   try {
     const response = await prisma.parentPlatform.findMany();
     res.status(200).json(response);

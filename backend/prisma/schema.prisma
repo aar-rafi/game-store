@@ -40,18 +40,28 @@ model Game {
   esrb_rating        EsrbRating[]
   short_screenshots  ShortScreenshot[]
   Rating             Rating[]
+  game_rating        game_rating[]
 
   @@unique([slug, name])
 }
 
 model Rating {
-  id      Int    @id
-  title   String
-  count   Int
-  percent Float
-  games   Game[]
+  id          Int           @id
+  title       String
+  games       Game[]
+  game_rating game_rating[]
 
   @@unique([title])
+}
+
+model game_rating {
+  id       Int    @id @default(autoincrement())
+  count    Int
+  percent  Float
+  games    Game   @relation(fields: [gameId], references: [id])
+  rating   Rating @relation(fields: [ratingId], references: [id])
+  gameId   Int
+  ratingId Int
 }
 
 model AddedByStatus {

@@ -24,7 +24,7 @@ const Demo = () => {
   useEffect(() => {
     // Fetch data from the backend API
     api
-      .get<Game[]>("/genres") // Replace '/api/your-endpoint' with your actual backend API endpoint
+      .get<Game[]>("/games") // Replace '/api/your-endpoint' with your actual backend API endpoint
       .then((response: AxiosResponse<Game[]>) => {
         setData(response.data);
         setLoading(false);
