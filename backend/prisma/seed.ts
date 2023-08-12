@@ -90,8 +90,8 @@ async function seed() {
           create: {
             id: ratingData.id,
             title: ratingData.title,
-            count: ratingData.count,
-            percent: ratingData.percent,
+            // count: ratingData.count,
+            // percent: ratingData.percent,
             games: {
               connect: {
                 id: gameData.id,
