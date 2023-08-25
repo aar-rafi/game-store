@@ -11,57 +11,95 @@ datasource db {
 }
 
 model Game {
-  id                 Int               @id
-  slug               String
-  name               String
-  released           String
-  tba                Boolean
-  background_image   String
-  rating             Float
-  rating_top         Float
-  ratings_count      Int
-  reviews_text_count Int
-  added              Int
-  added_by_status    AddedByStatus?
-  metacritic         Int?
-  playtime           Int
-  suggestions_count  Int
-  updated            String
-  user_game          String?
-  reviews_count      Int
-  saturated_color    String
-  dominant_color     String
-  clip               String
-  platforms          PlatformOnGames[]
-  parent_platforms   ParentPlatform[]
-  genres             Genre[]
-  stores             Store[]
-  tags               Tag[]
-  esrb_rating        EsrbRating[]
-  short_screenshots  ShortScreenshot[]
-  Rating             Rating[]
-  game_rating        game_rating[]
+  id                Int                @id
+  slug              String
+  name              String
+  released          String
+  tba               Boolean
+  background_image  String
+  rating            Float
+  rating_top        Float
+  ratings_count     Int
+  added_count       Int
+  added_by_status   AddedByStatus?
+  metacritic        Int?
+  playtime          Int
+  suggestions_count Int
+  updated           String
+  reviews_count     Int
+  description       String?
+  clips             String
+  platforms         PlatformOnGames[]
+  parent_platforms  ParentPlatform[]
+  genres            Genre[]
+  stores            Store[]
+  tags              Tag[]
+  esrb_rating       EsrbRating[]
+  short_screenshots ShortScreenshot[]
+  rating_level      GameRatingLevels[]
+  Publisher         Publisher?         @relation(fields: [publisherId], references: [id])
+  publisherId       Int?
+  Reviews           Reviews[]
+  Collection        Collection[]
+  Wishlist          Wishlist[]
+  news              News[]
+  Events            Events[]
 
   @@unique([slug, name])
 }
 
-model Rating {
-  id          Int           @id
-  title       String
+model Publisher {
+  id          Int    @id
+  name        String
+  since       String
+  image       String
+  games_count Int
+  description String
   games       Game[]
-  game_rating game_rating[]
 
-  @@unique([title])
+  @@unique([name])
+  @@map("publisher")
 }
 
-model game_rating {
-  id       Int    @id @default(autoincrement())
-  count    Int
-  percent  Float
-  games    Game   @relation(fields: [gameId], references: [id])
-  rating   Rating @relation(fields: [ratingId], references: [id])
-  gameId   Int
-  ratingId Int
+model Person {
+  id               Int             @id
+  name             String
+  email            String
+  password         String
+  joined           String
+  profile_picture  String
+  bio              String
+  socialmedia_link String
+  Reviews          Reviews[]
+  Collection       Collection[]
+  Wishlist         Wishlist[]
+  Comments         Comments[]
+  Participation    Participation[]
+
+  @@unique([email])
+  @@map("person")
+}
+
+model RatingLevel {
+  id          Int                @id
+  title       String
+  game_rating GameRatingLevels[]
+
+  @@unique([title])
+  @@map("rating_level")
+}
+
+model GameRatingLevels {
+  id           Int         @id @default(autoincrement())
+  count        Int
+  percent      Float
+  games        Game        @relation(fields: [gameId], references: [id])
+  rating_level RatingLevel @relation(fields: [ratingId], references: [id])
+  gameId       Int
+  ratingId     Int
+
+  @@unique([gameId, ratingId])
+  @@map("game_rating")
 }
 
 model AddedByStatus {
@@ -76,17 +114,7 @@ model AddedByStatus {
   gameId  Int
 
   @@unique([gameId])
-}
-
-model PlatformOnGames {
-  game                     Game     @relation(fields: [gameId], references: [id])
-  platform                 Platform @relation(fields: [platformId], references: [id])
-  minimum_requirements     String?
-  recommended_requirements String?
-  gameId                   Int
-  platformId               Int
-
-  @@id([gameId, platformId])
+  @@map("added_by_status")
 }
 
 model Platform {
@@ -101,6 +129,19 @@ model Platform {
   games            PlatformOnGames[]
 
   @@unique([slug])
+  @@map("platform")
+}
+
+model PlatformOnGames {
+  game                     Game     @relation(fields: [gameId], references: [id])
+  platform                 Platform @relation(fields: [platformId], references: [id])
+  minimum_requirements     String?
+  recommended_requirements String?
+  gameId                   Int
+  platformId               Int
+
+  @@id([gameId, platformId])
+  @@map("platform_on_games")
 }
 
 model ParentPlatform {
@@ -110,6 +151,7 @@ model ParentPlatform {
   games Game[]
 
   @@unique([slug])
+  @@map("parent_platform")
 }
 
 model Genre {
@@ -121,6 +163,7 @@ model Genre {
   games            Game[]
 
   @@unique([slug])
+  @@map("genre")
 }
 
 model Store {
@@ -133,6 +176,7 @@ model Store {
   game             Game[]
 
   @@unique([slug])
+  @@map("store")
 }
 
 model Tag {
@@ -145,6 +189,7 @@ model Tag {
   games            Game[]
 
   @@unique([slug])
+  @@map("tag")
 }
 
 model EsrbRating {
@@ -154,6 +199,7 @@ model EsrbRating {
   games Game[]
 
   @@unique([slug])
+  @@map("esrb_rating")
 }
 
 model ShortScreenshot {
@@ -163,4 +209,102 @@ model ShortScreenshot {
   gameId Int
 
   @@unique([image])
+  @@map("short_screenshot")
+}
+
+model Reviews {
+  id          Int    @id
+  game        Game   @relation(fields: [gameId], references: [id])
+  person      Person @relation(fields: [personId], references: [id])
+  gameId      Int
+  personId    Int
+  rating      Float
+  review_text String
+
+  @@unique([gameId, personId])
+  @@map("reviews")
+}
+
+model Collection {
+  id       Int    @id
+  person   Person @relation(fields: [personId], references: [id])
+  game     Game   @relation(fields: [gameId], references: [id])
+  personId Int
+  gameId   Int
+
+  @@unique([personId, gameId])
+  @@map("collection")
+}
+
+model Wishlist {
+  id       Int    @id
+  person   Person @relation(fields: [personId], references: [id])
+  game     Game   @relation(fields: [gameId], references: [id])
+  personId Int
+  gameId   Int
+
+  @@unique([personId, gameId])
+  @@map("wishlist")
+}
+
+model News {
+  id             Int        @id
+  title          String
+  image          String?
+  author         String
+  description    String
+  date           String
+  likes_count    Int
+  comments_count Int
+  Comments       Comments[]
+  game           Game       @relation(fields: [gameId], references: [id])
+  gameId         Int
+
+  @@unique([title])
+  @@map("news")
+}
+
+model Comments {
+  id       Int     @id
+  comment  String
+  like     Boolean
+  date     String
+  person   Person  @relation(fields: [personId], references: [id])
+  personId Int
+  news     News    @relation(fields: [newsId], references: [id])
+  newsId   Int
+
+  @@unique([personId, newsId])
+  @@map("comments")
+}
+
+model Events {
+  id             Int             @id
+  title          String
+  image          String?
+  description    String
+  date           String
+  organizer      String
+  likes_count    Int
+  comments_count Int
+  game           Game            @relation(fields: [gameId], references: [id])
+  gameId         Int
+  Participation  Participation[]
+
+  @@unique([title])
+  @@map("events")
+}
+
+model Participation {
+  id       Int     @id
+  date     String
+  comment  String
+  like     Boolean
+  person   Person  @relation(fields: [personId], references: [id])
+  event    Events  @relation(fields: [eventId], references: [id])
+  personId Int
+  eventId  Int
+
+  @@unique([personId, eventId])
+  @@map("participation")
 }

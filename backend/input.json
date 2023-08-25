@@ -1,0 +1,34 @@
+{
+  "id": 4427,
+  "slug": "bioshock-2",
+  "name": "BioShock 2",
+  "released": "2010-02-09",
+  "tba": false,
+  "background_image": "https://media.rawg.io/media/games/157/15742f2f67eacff546738e1ab5c19d20.jpg",
+  "rating": 4.07,
+  "rating_top": 4,
+  "stores": [
+    {
+      "id": 79405,
+      "store": {
+        "id": 4,
+        "name": "App Store",
+        "slug": "apple-appstore",
+        "domain": "apps.apple.com",
+        "games_count": 75293,
+        "image_background": "https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg"
+      }
+    },
+    {
+      "id": 440408,
+      "store": {
+        "id": 2,
+        "name": "Xbox Store",
+        "slug": "xbox-store",
+        "domain": "microsoft.com",
+        "games_count": 4767,
+        "image_background": "https://media.rawg.io/media/games/310/3106b0e012271c5ffb16497b070be739.jpg"
+      }
+    }
+  ]
+}

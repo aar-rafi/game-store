@@ -18,24 +18,17 @@ async function seed() {
           rating: gameData.rating,
           rating_top: gameData.rating_top,
           ratings_count: gameData.ratings_count,
-          reviews_text_count: gameData.reviews_text_count,
-          added: gameData.added,
+          added_count: gameData.added,
           metacritic: gameData.metacritic,
           playtime: gameData.playtime,
           suggestions_count: gameData.suggestions_count,
           updated: gameData.updated,
           reviews_count: gameData.reviews_count,
-          saturated_color: gameData.saturated_color,
-          dominant_color: gameData.dominant_color,
-          user_game: gameData.user_game,
-          clip: gameData.clip ? gameData.clip : "",
+          clips: gameData.clip ? gameData.clip : "",
           esrb_rating: {
             connectOrCreate: {
               where: { id: gameData.esrb_rating.id },
               create: {
-                // id: gameData.esrb_rating.id,
-                // name: gameData.esrb_rating.name,
-                // slug: gameData.esrb_rating.slug,
                 ...gameData.esrb_rating,
               },
             },
@@ -43,12 +36,6 @@ async function seed() {
           added_by_status: gameData.added_by_status
             ? {
                 create: {
-                  // yet: gameData.added_by_status.yet,
-                  // owned: gameData.added_by_status.owned,
-                  // beaten: gameData.added_by_status.beaten,
-                  // toplay: gameData.added_by_status.toplay,
-                  // dropped: gameData.added_by_status.dropped,
-                  // playing: gameData.added_by_status.playing,
                   ...gameData.added_by_status,
                 },
               }
@@ -56,45 +43,29 @@ async function seed() {
         },
       });
 
-      // if (gameData.esrb_rating) {
-      //   await prisma.esrbRating.upsert({
-      //     where: { id: gameData.esrb_rating.id },
-      //     update: {
-      //       games: {
-      //         connect: {
-      //           id: gameData.id,
-      //         },
-      //       },
-      //     },
-      //     create: {
-      //       id: gameData.esrb_rating.id,
-      //       name: gameData.esrb_rating.name,
-      //       slug: gameData.esrb_rating.slug,
-      //     },
-      //   });
-      // }
-
       // Seed the ratings
       for (const ratingData of gameData.ratings) {
-        await prisma.rating.upsert({
+        await prisma.ratingLevel.upsert({
           where: {
             id: ratingData.id,
           },
           update: {
-            games: {
-              connect: {
-                id: gameData.id,
+            game_rating: {
+              create: {
+                gameId: gameData.id,
+                count: ratingData.count,
+                percent: ratingData.percent,
               },
             },
           },
           create: {
             id: ratingData.id,
             title: ratingData.title,
-            // count: ratingData.count,
-            // percent: ratingData.percent,
-            games: {
-              connect: {
-                id: gameData.id,
+            game_rating: {
+              create: {
+                gameId: gameData.id,
+                count: ratingData.count,
+                percent: ratingData.percent,
               },
             },
           },
@@ -103,15 +74,6 @@ async function seed() {
 
       // Seed the platforms
       for (const platformData of gameData.platforms) {
-        // await prisma.platformOnGames.create({
-        //   data: {
-        //     minimum_requirements: platformData.requirements_en?.minimum,
-        //     //recommended_requirements:platformData.requirements_en?recommended:null,
-        //     gameId: gameData.id,
-        //     platformId: platformData.platform.id,
-        //   },
-        // });
-
         await prisma.platform.upsert({
           where: {
             id: platformData.platform.id,
@@ -124,8 +86,6 @@ async function seed() {
                   platformData.requirements_ru?.recommended
                 ),
                 minimum_requirements: platformData.requirements_en?.minimum,
-
-                //platformId: platformData.platform.id,
               },
             },
           },
@@ -146,11 +106,6 @@ async function seed() {
                   platformData.requirements_ru?.recommended
                 ),
                 minimum_requirements: platformData.requirements_en?.minimum,
-                // game: {
-                //   connect: {
-                //      id: gameData.id ,
-                //   },
-                // },
               },
             },
           },

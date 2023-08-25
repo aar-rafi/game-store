@@ -5,7 +5,11 @@ const prisma = new PrismaClient({ log: ["query"] });
 
 export const getGames = async (_req: Request, res: Response) => {
   try {
-    const response = await prisma.game.findMany();
+    const response = await prisma.game.findMany({
+      include: {
+        parent_platforms: true,
+      },
+    });
     //console.log(response.length);
 
     res.status(200).json(response);
